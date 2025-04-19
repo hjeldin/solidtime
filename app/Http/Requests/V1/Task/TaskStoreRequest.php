@@ -36,6 +36,11 @@ class TaskStoreRequest extends FormRequest
                     return $builder->where('project_id', '=', $this->input('project_id'));
                 })->withCustomTranslation('validation.task_name_already_exists'),
             ],
+            'description' => [
+                'nullable',
+                'string',
+                'max:65535',
+            ],
             'project_id' => [
                 'required',
                 ExistsEloquent::make(Project::class, null, function (Builder $builder): Builder {

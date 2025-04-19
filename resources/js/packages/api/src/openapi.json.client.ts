@@ -386,6 +386,7 @@ const TaskResource = z
     .object({
         id: z.string(),
         name: z.string(),
+        description: z.string(),
         is_done: z.boolean(),
         project_id: z.string(),
         estimated_time: z.union([z.number(), z.null()]),
@@ -397,6 +398,7 @@ const TaskResource = z
 const TaskStoreRequest = z
     .object({
         name: z.string().min(1).max(255),
+        description: z.union([z.string(), z.null()]).optional(),
         project_id: z.string(),
         estimated_time: z.union([z.number(), z.null()]).optional(),
     })
@@ -408,6 +410,9 @@ const TaskUpdateRequest = z
         estimated_time: z.union([z.number(), z.null()]).optional(),
     })
     .passthrough();
+const updateTask_Body = TaskUpdateRequest.and(
+    z.object({ description: z.string() }).partial().passthrough()
+);
 const start = z.union([z.string(), z.null()]).optional();
 const TimeEntryResource = z
     .object({
@@ -524,6 +529,7 @@ export const schemas = {
     TaskResource,
     TaskStoreRequest,
     TaskUpdateRequest,
+    updateTask_Body,
     start,
     TimeEntryResource,
     TimeEntryStoreRequest,
@@ -2871,7 +2877,7 @@ const endpoints = makeApi([
             {
                 name: 'body',
                 type: 'Body',
-                schema: TaskUpdateRequest,
+                schema: updateTask_Body,
             },
             {
                 name: 'organization',

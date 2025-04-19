@@ -66,6 +66,7 @@ export interface Task {
     // columns
     id: string;
     name: string;
+    description: string;
     project_id: string;
     organization_id: string;
     created_at: string | null;

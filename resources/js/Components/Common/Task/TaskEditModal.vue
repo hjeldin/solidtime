@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import TextInput from '@/packages/ui/src/Input/TextInput.vue';
+import TextAreaField from '@/packages/ui/src/Input/TextArea.vue';
 import SecondaryButton from '@/packages/ui/src/Buttons/SecondaryButton.vue';
 import DialogModal from '@/packages/ui/src/DialogModal.vue';
 import { ref } from 'vue';
@@ -20,6 +21,7 @@ const props = defineProps<{
 
 const taskBody = ref<UpdateTaskBody>({
     name: props.task.name,
+    description: props.task.description,
     estimated_time: props.task.estimated_time,
 });
 
@@ -55,6 +57,15 @@ useFocus(taskNameInput, { initialValue: true });
                         autocomplete="taskName"
                         @keydown.enter="submit()" />
                 </div>
+            </div>
+            <div class="flex space-x-4">
+                <TextAreaField
+                    id="taskName"
+                    ref="taskNameInput"
+                    v-model="taskBody.description"
+                    class="mt-1 block w-full"
+                    required
+                    @keydown.enter="submit()" />
             </div>
             <EstimatedTimeSection
                 v-if="isAllowedToPerformPremiumAction()"

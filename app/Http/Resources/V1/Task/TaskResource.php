@@ -26,6 +26,8 @@ class TaskResource extends BaseResource
             'id' => $this->resource->id,
             /** @var string $name Name */
             'name' => $this->resource->name,
+            /** @var string $description Description */
+            'description' => $this->resource->description,
             /** @var bool $is_done Whether the task is done */
             'is_done' => $this->resource->is_done,
             /** @var string $project_id ID of the project */
