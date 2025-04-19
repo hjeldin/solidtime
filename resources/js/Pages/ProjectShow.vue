@@ -33,6 +33,7 @@ import ProjectEditModal from '@/Components/Common/Project/ProjectEditModal.vue';
 import { Badge } from '@/packages/ui/src';
 import { formatCents } from '../packages/ui/src/utils/money';
 import { getOrganizationCurrencyString } from '../utils/money';
+import ProjectKanbanShow from '@/Pages/ProjectKanbanShow.vue';
 
 const { projects } = storeToRefs(useProjectsStore());
 
@@ -73,6 +74,23 @@ const shownTasks = computed(() => {
         }
         return task.project_id === projectId && task.is_done;
     });
+});
+
+const taskColumns = computed(() => {
+    return [
+        {
+            id: 'todo',
+            name: 'To Do',
+            tasks: shownTasks.value,
+        },
+        {
+            id: 'done',
+            name: 'Done',
+            tasks: shownTasks.value.filter(
+                (task) => task.done_at != null
+            ),
+        },
+    ];
 });
 </script>
 
@@ -140,6 +158,9 @@ const shownTasks = computed(() => {
                     v-model:show="showEditProjectModal"
                     :original-project="project"></ProjectEditModal>
             </div>
+        </MainContainer>
+        <MainContainer>
+            <ProjectKanbanShow v-if="project" :columns="taskColumns" :project-id="project!.id" />
         </MainContainer>
         <MainContainer>
             <div class="grid lg:grid-cols-2 gap-x-6 pt-6">
