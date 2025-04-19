@@ -9,12 +9,14 @@ import { useTasksStore } from '@/utils/useTasks';
 import ProjectDropdown from '@/Components/Common/Project/ProjectDropdown.vue';
 import EstimatedTimeSection from '@/packages/ui/src/EstimatedTimeSection.vue';
 import { isAllowedToPerformPremiumAction } from '@/utils/billing';
+import TextAreaField from '@/packages/ui/src/Input/TextArea.vue';
 
 const { createTask } = useTasksStore();
 const show = defineModel('show', { default: false });
 const saving = ref(false);
 
 const taskName = ref('');
+const taskDescription = ref('');
 const estimatedTime = ref<number | null>(null);
 
 const props = defineProps<{
@@ -30,6 +32,7 @@ watch(() => props.projectId, (value) => {
 async function submit() {
     await createTask({
         name: taskName.value,
+        description: taskDescription.value,
         project_id: taskProjectId.value,
         estimated_time: estimatedTime.value,
     });
@@ -67,6 +70,15 @@ useFocus(taskNameInput, { initialValue: true });
                 <div class="col-span-6 sm:col-span-4">
                     <ProjectDropdown v-model="taskProjectId"></ProjectDropdown>
                 </div>
+            </div>
+            <div class="flex space-x-4">
+                <TextAreaField
+                    id="taskName"
+                    ref="taskNameInput"
+                    v-model="taskDescription"
+                    class="mt-1 block w-full"
+                    required
+                    @keydown.enter="submit()" />
             </div>
             <EstimatedTimeSection
                 v-if="isAllowedToPerformPremiumAction()"
