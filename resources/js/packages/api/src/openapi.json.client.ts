@@ -386,6 +386,7 @@ const TaskResource = z
     .object({
         id: z.string(),
         name: z.string(),
+        status: z.string(),
         description: z.string(),
         is_done: z.boolean(),
         project_id: z.string(),
@@ -406,6 +407,7 @@ const TaskStoreRequest = z
 const TaskUpdateRequest = z
     .object({
         name: z.string().min(1).max(255),
+        status: z.string().max(20),
         is_done: z.boolean().optional(),
         estimated_time: z.union([z.number(), z.null()]).optional(),
     })

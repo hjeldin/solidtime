@@ -55,6 +55,7 @@ class Task extends Model implements AuditableContract
     protected $casts = [
         'name' => 'string',
         'description' => 'string',
+        'status' => 'string',
         'estimated_time' => 'integer',
         'done_at' => 'datetime',
     ];

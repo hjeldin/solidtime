@@ -102,6 +102,7 @@ class TaskController extends Controller
         ddd($request);
         $task->name = $request->input('name');
         $task->description = $request->input('description');
+        $task->status = $request->input('status');
         if ($this->canAccessPremiumFeatures($organization) && $request->has('estimated_time')) {
             $task->estimated_time = $request->getEstimatedTime();
         }

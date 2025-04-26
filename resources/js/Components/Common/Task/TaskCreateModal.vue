@@ -17,6 +17,7 @@ const saving = ref(false);
 
 const taskName = ref('');
 const taskDescription = ref('');
+const taskStatus = ref('');
 const estimatedTime = ref<number | null>(null);
 
 const props = defineProps<{
@@ -33,11 +34,14 @@ async function submit() {
     await createTask({
         name: taskName.value,
         description: taskDescription.value,
+        status: taskStatus.value,
         project_id: taskProjectId.value,
         estimated_time: estimatedTime.value,
     });
     show.value = false;
     taskName.value = '';
+    taskDescription.value = '';
+    taskStatus.value = '';
 }
 
 const taskNameInput = ref<HTMLInputElement | null>(null);
@@ -71,13 +75,25 @@ useFocus(taskNameInput, { initialValue: true });
                     <ProjectDropdown v-model="taskProjectId"></ProjectDropdown>
                 </div>
             </div>
-            <div class="flex space-x-4">
+            <div class="flex my-2">
                 <TextAreaField
                     id="taskName"
                     ref="taskNameInput"
                     v-model="taskDescription"
                     class="mt-1 block w-full"
                     required
+                    @keydown.enter="submit()" />
+            </div>
+            <div class="flex my-2">
+                <TextInput
+                    id="taskStatus"
+                    ref="taskStatusInput"
+                    v-model="taskStatus"
+                    type="text"
+                    placeholder="Status"
+                    class="block w-full"
+                    required
+                    autocomplete="taskStatus"
                     @keydown.enter="submit()" />
             </div>
             <EstimatedTimeSection

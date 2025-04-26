@@ -22,6 +22,7 @@ const props = defineProps<{
 const taskBody = ref<UpdateTaskBody>({
     name: props.task.name,
     description: props.task.description,
+    status: props.task.status,
     estimated_time: props.task.estimated_time,
 });
 
@@ -58,13 +59,25 @@ useFocus(taskNameInput, { initialValue: true });
                         @keydown.enter="submit()" />
                 </div>
             </div>
-            <div class="flex space-x-4">
+            <div class="flex space-x-4 my-2">
                 <TextAreaField
-                    id="taskName"
-                    ref="taskNameInput"
+                    id="taskDescription"
+                    ref="taskDescriptionInput"
                     v-model="taskBody.description"
                     class="mt-1 block w-full"
                     required
+                    @keydown.enter="submit()" />
+            </div>
+            <div class="flex my-2">
+                <TextInput
+                    id="taskStatus"
+                    ref="taskStatusInput"
+                    v-model="taskBody.status"
+                    type="text"
+                    placeholder="Status"
+                    class="block w-full"
+                    required
+                    autocomplete="taskStatus"
                     @keydown.enter="submit()" />
             </div>
             <EstimatedTimeSection
