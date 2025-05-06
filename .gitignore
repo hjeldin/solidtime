@@ -42,3 +42,13 @@ yarn-error.log
 /data
 /config/caddy
 /config/composer
+
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml

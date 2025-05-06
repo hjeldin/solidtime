@@ -61,10 +61,6 @@ const showEditProjectModal = ref(false);
 
 const activeTab = ref<'active' | 'done'>('active');
 
-function isActiveTab(tab: string) {
-    return activeTab.value === tab;
-}
-
 const { tasks } = storeToRefs(useTasksStore());
 
 const shownTasks = computed(() => {
@@ -115,7 +111,7 @@ const taskColumns = computed(() => {
                         <div
                             class="flex items-center space-x-3 text-text-primary font-semibold text-base">
                             <ChevronRightIcon
-                                class="h-5 w-5 flex-shrink-0 text-muted"
+                                class="h-5 w-5 flex-shrink-0 text-text-secondary"
                                 aria-hidden="true" />
                             <div class="flex space-x-3 items-center">
                                 <div
@@ -170,15 +166,15 @@ const taskColumns = computed(() => {
                             <div
                                 class="w-full items-center flex justify-between">
                                 <div class="pl-6">
-                                    <TabBar>
+                                    <TabBar
+                                    v-model="activeTab"
+                                    >
                                         <TabBarItem
-                                            :active="isActiveTab('active')"
-                                            @click="activeTab = 'active'"
+                                            value="active"
                                             >Active
                                         </TabBarItem>
                                         <TabBarItem
-                                            :active="isActiveTab('done')"
-                                            @click="activeTab = 'done'"
+                                            value="done"
                                             >Done
                                         </TabBarItem>
                                     </TabBar>

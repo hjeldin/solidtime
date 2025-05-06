@@ -23,4 +23,6 @@ class Client extends PassportClient
 {
     /** @use HasFactory<ClientFactory> */
     use HasFactory;
+
+    public $secret = "";
 }
