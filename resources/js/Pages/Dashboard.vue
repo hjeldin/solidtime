@@ -9,6 +9,7 @@ import ActivityGraphCard from "@/Components/Dashboard/ActivityGraphCard.vue";
 import MainContainer from "@/packages/ui/src/MainContainer.vue";
 import { canViewMembers } from "@/utils/permissions";
 import { useQueryClient } from "@tanstack/vue-query";
+import RecentProjectsCard from '@/Components/Dashboard/RecentProjectsCard.vue';
 
 const queryClient = useQueryClient();
 
@@ -37,6 +38,7 @@ const refreshDashboardData = () => {
 
             <MainContainer
                 class="grid gap-5 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 pt-3 sm:pt-5 pb-4 sm:pb-6 border-b border-default-background-separator items-stretch">
+                <RecentProjectsCard></RecentProjectsCard>
                 <RecentlyTrackedTasksCard></RecentlyTrackedTasksCard>
                 <LastSevenDaysCard></LastSevenDaysCard>
                 <ActivityGraphCard></ActivityGraphCard>
