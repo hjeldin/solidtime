@@ -226,6 +226,7 @@ class TimeEntryController extends Controller
                 'start' => $request->getStart()->timezone($timezone),
                 'end' => $request->getEnd()->timezone($timezone),
                 'localization' => $localizationService,
+                'showBillableRate' => $showBillableRate,
             ]);
             $footerViewFile = file_get_contents(resource_path('views/reports/time-entry-index/pdf-footer.blade.php'));
             if ($footerViewFile === false) {
@@ -428,6 +429,7 @@ class TimeEntryController extends Controller
                 'end' => $request->getEnd()->timezone($timezone),
                 'debug' => $debug,
                 'localization' => $localizationService,
+                'showBillableRate' => $showBillableRate,
             ]);
             $footerViewFile = file_get_contents(resource_path('views/reports/time-entry-aggregate/pdf-footer.blade.php'));
             if ($footerViewFile === false) {
@@ -456,7 +458,7 @@ class TimeEntryController extends Controller
                 ->putFileAs($folderPath, new File($tempFolder->path($filenameTemp)), $filename);
         } else {
             Excel::store(
-                new TimeEntriesReportExport($aggregatedData, $format, $currency, $group, $subGroup),
+                new TimeEntriesReportExport($aggregatedData, $format, $currency, $group, $subGroup, $showBillableRate),
                 $path,
                 config('filesystems.private'),
                 $format->getExportPackageType(),

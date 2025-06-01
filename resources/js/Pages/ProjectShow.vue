@@ -3,7 +3,7 @@ import MainContainer from '@/packages/ui/src/MainContainer.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { FolderIcon, PlusIcon } from '@heroicons/vue/16/solid';
 import SecondaryButton from '@/packages/ui/src/Buttons/SecondaryButton.vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, inject, type ComputedRef } from 'vue';
 import { useProjectsStore } from '@/utils/useProjects';
 import { storeToRefs } from 'pinia';
 import {
@@ -33,9 +33,12 @@ import ProjectEditModal from '@/Components/Common/Project/ProjectEditModal.vue';
 import { Badge } from '@/packages/ui/src';
 import { formatCents } from '../packages/ui/src/utils/money';
 import { getOrganizationCurrencyString } from '../utils/money';
+import type { Organization } from '@/packages/api/src';
 import ProjectKanbanShow from '@/Pages/ProjectKanbanShow.vue';
 
 const { projects } = storeToRefs(useProjectsStore());
+
+const organization = inject<ComputedRef<Organization>>('organization');
 
 const project = computed(() => {
     return (
@@ -130,7 +133,10 @@ const taskColumns = computed(() => {
                         {{
                             formatCents(
                                 project?.billable_rate ?? 0,
-                                getOrganizationCurrencyString()
+                                getOrganizationCurrencyString(),
+                                organization?.currency_format,
+                                organization?.currency_symbol,
+                                organization?.number_format
                             )
                         }}
                         / h
@@ -166,15 +172,11 @@ const taskColumns = computed(() => {
                             <div
                                 class="w-full items-center flex justify-between">
                                 <div class="pl-6">
-                                    <TabBar
-                                    v-model="activeTab"
-                                    >
-                                        <TabBarItem
-                                            value="active"
+                                    <TabBar v-model="activeTab">
+                                        <TabBarItem value="active"
                                             >Active
                                         </TabBarItem>
-                                        <TabBarItem
-                                            value="done"
+                                        <TabBarItem value="done"
                                             >Done
                                         </TabBarItem>
                                     </TabBar>
@@ -206,11 +208,11 @@ const taskColumns = computed(() => {
                                 Add Member
                             </SecondaryButton>
                             <ProjectMemberCreateModal
-                                v-model:show="
-                                    createProjectMember
-                                "
+                                v-model:show="createProjectMember"
                                 :project-id="projectId"
-                                :existing-members="projectMembers"></ProjectMemberCreateModal>
+                                :existing-members="
+                                    projectMembers
+                                "></ProjectMemberCreateModal>
                         </template>
                     </CardTitle>
                     <Card>

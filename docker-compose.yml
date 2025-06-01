@@ -1,13 +1,13 @@
 services:
     laravel.test:
         build:
-            context: ./docker/local/8.3
+            context: ./docker/prod
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
         ports:
             - '${FORWARD_WEB_PORT:-8083}:80'
-        image: sail-8.3/app
+        image: hjeldin/solidtime:latest
         labels:
             - "traefik.enable=true"
             - "traefik.docker.network=${NETWORK_NAME}"
@@ -199,7 +199,7 @@ services:
 networks:
     reverse-proxy:
         name: "${NETWORK_NAME}"
-        external: true
+#        external: true
     sail:
         driver: bridge
 volumes:

@@ -5,16 +5,16 @@ import { ChartBarIcon } from '@heroicons/vue/20/solid';
 import ReportingChart from '@/Components/Common/Reporting/ReportingChart.vue';
 import { formatHumanReadableDuration } from '@/packages/ui/src/utils/time';
 import ReportingRow from '@/Components/Common/Reporting/ReportingRow.vue';
-import { getOrganizationCurrencyString } from '@/utils/money';
 import ReportingPieChart from '@/Components/Common/Reporting/ReportingPieChart.vue';
 import { formatCents } from '@/packages/ui/src/utils/money';
-import { computed, onMounted, ref } from 'vue';
+import type { CurrencyFormat } from '@/packages/ui/src/utils/money';
+import { computed, onMounted, provide, ref } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { api } from '@/packages/api/src';
 import { getRandomColorWithSeed } from '@/packages/ui/src/utils/color';
 import { useReportingStore } from '@/utils/useReporting';
 import { Head } from '@inertiajs/vue3';
-import { useTheme } from "@/utils/theme";
+import { useTheme } from '@/utils/theme';
 
 const sharedSecret = ref<string | null>(null);
 
@@ -40,6 +40,45 @@ onMounted(() => {
         sharedSecret.value = currentUrl.split('#')[1];
     }
 });
+
+const reportCurrency = computed(() => {
+    if (sharedReportResponseData.value) {
+        return sharedReportResponseData.value?.currency;
+    }
+    return 'EUR';
+});
+
+const reportIntervalFormat = computed(() => {
+    return sharedReportResponseData.value?.interval_format;
+});
+
+const reportNumberFormat = computed(() => {
+    return sharedReportResponseData.value?.number_format;
+});
+
+const reportCurrencyFormat = computed(() => {
+    return (sharedReportResponseData.value?.currency_format ??
+        'symbol-before') as CurrencyFormat;
+});
+
+const reportDateFormat = computed(() => {
+    return sharedReportResponseData.value?.date_format;
+});
+
+const reportCurrencySymbol = computed(() => {
+    return sharedReportResponseData.value?.currency_symbol;
+});
+
+provide(
+    'organization',
+    computed(() => ({
+        'number_format': reportNumberFormat.value,
+        'interval_format': reportIntervalFormat.value,
+        'currency_format': reportCurrencyFormat.value,
+        'currency_symbol': reportCurrencySymbol.value,
+        'date_format': reportDateFormat.value,
+    }))
+);
 
 const aggregatedTableTimeEntries = computed(() => {
     if (sharedReportResponseData.value) {
@@ -121,10 +160,7 @@ const tableData = computed(() => {
                         cost: el.cost,
                         description:
                             el.description ??
-                            emptyPlaceholder[
-                                aggregatedTableTimeEntries.value
-                                    ?.grouped_type ?? 'project'
-                            ],
+                            emptyPlaceholder[entry.grouped_type ?? 'project'],
                     };
                 }) ?? [],
         };
@@ -132,15 +168,16 @@ const tableData = computed(() => {
 });
 
 const { groupByOptions } = useReportingStore();
+
 function getGroupLabel(key: string) {
     return groupByOptions.find((option) => {
         return option.value === key;
     })?.label;
 }
+
 onMounted(async () => {
     useTheme();
-})
-
+});
 </script>
 
 <template>
@@ -193,10 +230,9 @@ onMounted(async () => {
                             <ReportingRow
                                 v-for="entry in tableData"
                                 :key="entry.description ?? 'none'"
-                                :entry="entry"
-                                :type="
-                                    aggregatedTableTimeEntries.grouped_type
-                                "></ReportingRow>
+                                :currency="reportCurrency"
+                                :currency-format="reportCurrencyFormat"
+                                :entry="entry"></ReportingRow>
                             <div
                                 class="contents [&>*]:transition text-text-tertiary [&>*]:h-[50px]">
                                 <div class="flex items-center pl-6 font-medium">
@@ -206,7 +242,9 @@ onMounted(async () => {
                                     class="justify-end flex items-center font-medium">
                                     {{
                                         formatHumanReadableDuration(
-                                            aggregatedTableTimeEntries.seconds
+                                            aggregatedTableTimeEntries.seconds,
+                                            reportIntervalFormat,
+                                            reportNumberFormat
                                         )
                                     }}
                                 </div>
@@ -215,7 +253,9 @@ onMounted(async () => {
                                     {{
                                         formatCents(
                                             aggregatedTableTimeEntries.cost,
-                                            getOrganizationCurrencyString()
+                                            reportCurrency,
+                                            reportCurrencyFormat,
+                                            reportCurrencySymbol
                                         )
                                     }}
                                 </div>
